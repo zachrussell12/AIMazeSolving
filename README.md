@@ -19,5 +19,6 @@ Added abilities:
 
 ### DFS Search Demo:
 https://github.com/zachrussell12/AIMazeSolving/assets/68019586/4a873a8b-ffde-4ee9-96b4-50f21c5dc5b3
+
 As you can see. the top right of the maze is completely left out of the search. This is because of the nature of Depth-First Search which is sometimes nicknamed "left-most search" because it continues to expand state nodes on the left side of the tree.
 
