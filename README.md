@@ -10,7 +10,7 @@ Current abilities:
 - Agent can currently employ Depth-First search to solve both the easy and the hard maze.
 - Agent prints out the correct path to the goal state (the red square).
 
-###DFS Search Demo:
+### DFS Search Demo:
 
 https://github.com/zachrussell12/AIMazeSolving/assets/68019586/a588a01e-b3d4-4cb6-ad92-377092717898
 
