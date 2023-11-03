@@ -13,7 +13,7 @@ Current abilities:
 ## November 3rd
 
 Added abilities:
-- Upon completing the maze, the paths shown that the AI tried are painted onto the JFrame to view how each algorithm conducted its search for the goal.
+- Upon completing the maze, the paths that the AI expanded upon are painted onto the JFrame to view how each algorithm conducted its search for the goal.
 - The time to complete the search is also printed in the console for viewing.
 - You can now enter a random seed if wanted, if not chosen it will default to a chosen seed. 
 
