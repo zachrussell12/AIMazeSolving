@@ -1,19 +1,21 @@
 import javax.swing.*;
 import java.util.*;
 
-public class RLAgent {
+public class SearchAgent {
 
     private final boolean[][] currentMaze;
     private final int[] finalCoords;
 
-    public RLAgent(MazeGeneratorEasy maze){
+    public SearchAgent(MazeGeneratorEasy maze){
         this.currentMaze = maze.getMaze();
         this.finalCoords = maze.getFinalCoords();
 
     }
 
-    public List<String> DFS_SEARCH(){
+    public List<List<String>> DFS_SEARCH(){
+        List<List<String>> combinedPaths = new java.util.ArrayList<>();
         List<String> path = new java.util.ArrayList<>();
+        List<List<String>> visitedPaths = new java.util.ArrayList<>();
         int[] arr = {0, 0};
         int iterator = 0;
         List<int[]> neighbors = null;
@@ -84,9 +86,54 @@ public class RLAgent {
 
         Collections.reverse(path);
 
-        System.out.println("PATH: " + path.toString());
+        for(int i = 0; i < path.size(); i++){
+            for(int j = 0; j < visitedStates.size(); j++){
+                if(Integer.parseInt(path.get(i).split(",")[0]) == visitedStates.get(j)[0] && Integer.parseInt(path.get(i).split(",")[1]) == visitedStates.get(j)[1]){
+                    //System.out.println("Found already visited state");
+                    visitedStates.remove(j);
+                    break;
+                }
+            }
+        }
 
-        return path;
+        List<String> temp = new java.util.ArrayList<>();
+
+        for(var i = 0; i < visitedStates.size(); i++){
+            if(i == visitedStates.size()-1){
+                if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0] && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]-1)){
+                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
+                }
+                else if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0]-1 && visitedStates.get(i-1)[1] == visitedStates.get(i)[1])){
+                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
+                }
+                else{
+                    visitedPaths.add(new ArrayList<>(temp));
+                    temp.clear();
+                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
+                }
+            }
+            else if (i != 0){
+                if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0] && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]-1) || (visitedStates.get(i-1)[0] == visitedStates.get(i)[0] && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]+1)){
+                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
+                }
+                else if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0]-1 && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]) || (visitedStates.get(i-1)[0] == visitedStates.get(i)[0]+1 && visitedStates.get(i-1)[1] == visitedStates.get(i)[1])){
+                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
+                }
+                else{
+                    visitedPaths.add(new ArrayList<>(temp));
+                    temp.clear();
+                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
+                }
+            }
+        }
+
+        visitedPaths.add(new ArrayList<>(temp));
+
+        combinedPaths.add(path);
+        combinedPaths.addAll(visitedPaths);
+
+
+        return combinedPaths;
     }
 
     private List<int[]> discoverValidNeighbors(int x, int y){

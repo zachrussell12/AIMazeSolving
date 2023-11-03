@@ -12,23 +12,35 @@ public class MazeGeneratorEasy extends JPanel {
 
     public static int[] finalCoords = new int[2];
 
-    private static List<String> solution = null;
     private int currentPointIndex = 0;
     private Timer timer;
-    private List<Point> pointList = new ArrayList<>();
+    private List<ColorPoint> colorPoints = new ArrayList<>();
     public static boolean[][] maze;
-    private final Random random = new Random(85034);
+    private Random random = new Random(85034);
 
-    public MazeGeneratorEasy(int blockWidth, int numRows, int numCols) {
+    public MazeGeneratorEasy(int blockWidth, int numRows, int numCols, int seed) {
         blockSize = blockWidth;
         rows = numRows;
         cols = numCols;
         setPreferredSize(new Dimension(rows*blockSize, cols*blockSize));
         maze = new boolean[rows][cols];
+        if(seed != 0){
+            random = new Random(seed);
+        }
         generateMaze(0, 0);
 
-        timer = new Timer(blockSize <= 25 ? 50 : 250, e -> drawNextPoint());
+        timer = new Timer(blockSize <= 25 ? 40 : 150, e -> drawNextPoint());
         timer.setInitialDelay(2000);
+    }
+
+    private class ColorPoint {
+        Point point;
+        Color color;
+
+        ColorPoint(Point point, Color color) {
+            this.point = point;
+            this.color = color;
+        }
     }
 
     public static boolean[][] getMaze() {
@@ -44,7 +56,6 @@ public class MazeGeneratorEasy extends JPanel {
     }
 
     public static void setSolution(List<String> pathing){
-        solution = pathing;
     }
 
     private void generateMaze(int r, int c) {
@@ -107,19 +118,29 @@ public class MazeGeneratorEasy extends JPanel {
         return neighbors;
     }
 
-    public void drawCircles(List<String> stringCoordinates) {
-        for (String coord : stringCoordinates) {
-            String[] parts = coord.split(",");
-            int x = Integer.parseInt(parts[0].trim()) * blockSize;
-            int y = Integer.parseInt(parts[1].trim()) * blockSize;
-            pointList.add(new Point(x, y));
+    public void drawCircles(List<List<String>> listOfStringCoordinates) {
+        colorPoints.clear();
+        currentPointIndex = 0;
+
+        for (List<String> stringCoordinates : listOfStringCoordinates) {
+            Random randColor = new Random();
+            float r = random.nextFloat();
+            float g = random.nextFloat();
+            float b = random.nextFloat();
+            Color color = new Color(r, g, b); // Cycle through colors
+            for (String coord : stringCoordinates) {
+                String[] parts = coord.split(",");
+                int x = Integer.parseInt(parts[0].trim()) * blockSize;
+                int y = Integer.parseInt(parts[1].trim()) * blockSize;
+                colorPoints.add(new ColorPoint(new Point(x, y), color));
+            }
         }
 
         timer.start();
     }
 
     private void drawNextPoint() {
-        if (currentPointIndex < pointList.size()) {
+        if (currentPointIndex < colorPoints.size()) {
             repaint();
             currentPointIndex++;
         } else {
@@ -148,15 +169,12 @@ public class MazeGeneratorEasy extends JPanel {
         g.setColor(Color.RED);
         g.fillRect(finalCoords[0] * blockSize, finalCoords[1] * blockSize, blockSize, blockSize); // Finish
 
-
-        if(solution != null){
-
-            g.setColor(Color.BLUE);
-            for (int i = 0; i < currentPointIndex; i++) {
-                Point p = pointList.get(i);
-                g.fillOval(p.y+blockSize/4, p.x+blockSize/4, blockSize/2, blockSize/2);
-            }
+        for (int i = 0; i < currentPointIndex; i++) {
+            ColorPoint cp = colorPoints.get(i);
+            g.setColor(cp.color);
+            g.fillOval(cp.point.y +(blockSize/4), cp.point.x + (blockSize/4), blockSize/2, blockSize/2);
         }
+
     }
 
 }
