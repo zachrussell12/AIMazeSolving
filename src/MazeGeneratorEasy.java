@@ -6,9 +6,9 @@ import java.util.*;
 import java.util.List;
 
 public class MazeGeneratorEasy extends JPanel {
-    private static int rows; // 600 / 50 = 12
-    private static int cols; // 600 / 50 = 12
-    private int blockSize; // Each block is 50 pixels
+    private static int rows;
+    private static int cols;
+    private int blockSize;
 
     public static int[] finalCoords = new int[2];
 
@@ -17,7 +17,7 @@ public class MazeGeneratorEasy extends JPanel {
     private Timer timer;
     private List<Point> pointList = new ArrayList<>();
     public static boolean[][] maze;
-    private final Random random = new Random(85034); // Fixed seed for the random number generator
+    private final Random random = new Random(85034);
 
     public MazeGeneratorEasy(int blockWidth, int numRows, int numCols) {
         blockSize = blockWidth;
@@ -32,7 +32,6 @@ public class MazeGeneratorEasy extends JPanel {
     }
 
     public static boolean[][] getMaze() {
-        // You might want to return a copy of the maze to avoid direct modification
         boolean[][] mazeCopy = new boolean[rows][cols];
         for (int i = 0; i < maze.length; i++) {
             System.arraycopy(maze[i], 0, mazeCopy[i], 0, maze[i].length);
@@ -62,7 +61,6 @@ public class MazeGeneratorEasy extends JPanel {
             if (!neighbors.isEmpty()) {
                 Collections.shuffle(neighbors, random);
                 int[] chosen = neighbors.get(0);
-                // Remove the wall between the current cell and chosen cell
                 int inBetweenRow = (row + chosen[0]) / 2;
                 int inBetweenCol = (col + chosen[1]) / 2;
                 maze[inBetweenRow][inBetweenCol] = true;
@@ -78,7 +76,6 @@ public class MazeGeneratorEasy extends JPanel {
             finalCoords[0] = cols-2;
             finalCoords[1] = rows-1;
         }
-        // If the second to last cell is a wall, move the finish up until an opening is found
         else {
             for (int row = rows - 1; row >= 0; row--) {
                 if (maze[row][cols - 2]) {
@@ -111,7 +108,6 @@ public class MazeGeneratorEasy extends JPanel {
     }
 
     public void drawCircles(List<String> stringCoordinates) {
-        // Parse string coordinates and add to list
         for (String coord : stringCoordinates) {
             String[] parts = coord.split(",");
             int x = Integer.parseInt(parts[0].trim()) * blockSize;
@@ -119,16 +115,14 @@ public class MazeGeneratorEasy extends JPanel {
             pointList.add(new Point(x, y));
         }
 
-        timer.start(); // Start the drawing process
+        timer.start();
     }
 
     private void drawNextPoint() {
         if (currentPointIndex < pointList.size()) {
-            // Trigger a repaint to draw the next point
             repaint();
             currentPointIndex++;
         } else {
-            // Stop the timer when all points are drawn
             timer.stop();
         }
     }
@@ -136,7 +130,7 @@ public class MazeGeneratorEasy extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // Draw the maze
+        // Draw  maze
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 if (maze[row][col]) {
@@ -148,19 +142,16 @@ public class MazeGeneratorEasy extends JPanel {
             }
         }
 
-        // Mark the start with green
         g.setColor(Color.GREEN);
-        g.fillRect(0, 0, blockSize, blockSize); // Start
+        g.fillRect(0, 0, blockSize, blockSize);
 
-        // Mark the finish with red, one block over from the right edge
         g.setColor(Color.RED);
-        // Check if the second to last cell in the bottom row is a path and not a wall
         g.fillRect(finalCoords[0] * blockSize, finalCoords[1] * blockSize, blockSize, blockSize); // Finish
 
 
         if(solution != null){
 
-            g.setColor(Color.BLUE); // Set the circle color
+            g.setColor(Color.BLUE);
             for (int i = 0; i < currentPointIndex; i++) {
                 Point p = pointList.get(i);
                 g.fillOval(p.y+blockSize/4, p.x+blockSize/4, blockSize/2, blockSize/2);
