@@ -28,15 +28,27 @@ public class Main {
                 frame.add(maze);
                 frame.pack();
                 frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
 
                 SearchAgent bobby = new SearchAgent(maze);
 
-                long before = System.currentTimeMillis();
-                List<List<String>> pathing = bobby.DFS_SEARCH();
-                long after = System.currentTimeMillis();
+                List<List<String>> pathing = null;
+                long after = 0;
+                long before = 0;
+                String alg = fetchAlg(input);
 
-                System.out.println("EXECUTION TIME: " + (after-before) + "ms");
+                if (alg.equals("D")) {
+                    before = System.currentTimeMillis();
+                    pathing = bobby.DFS_SEARCH();
+                    after = System.currentTimeMillis();
+                } else if (alg.equals("B")) {
+                    before = System.currentTimeMillis();
+                    pathing = bobby.BFS_SEARCH();
+                    after = System.currentTimeMillis();
+                }
+
+                frame.setVisible(true);
+
+                System.out.println("EXECUTION TIME: " + (after - before) + "ms");
 
                 maze.setSolution(pathing.get(0));
 
@@ -57,11 +69,24 @@ public class Main {
 
                 SearchAgent bobby = new SearchAgent(maze);
 
-                long before = System.currentTimeMillis();
-                List<List<String>> pathing = bobby.DFS_SEARCH();
-                long after = System.currentTimeMillis();
+                List<List<String>> pathing = null;
+                long after = 0;
+                long before = 0;
+                String alg = fetchAlg(input);
 
-                System.out.println("EXECUTION TIME: " + (after-before) + "ms");
+                if (alg.equals("D")) {
+                    before = System.currentTimeMillis();
+                    pathing = bobby.DFS_SEARCH();
+                    after = System.currentTimeMillis();
+                } else if (alg.equals("B")) {
+                    before = System.currentTimeMillis();
+                    pathing = bobby.BFS_SEARCH();
+                    after = System.currentTimeMillis();
+                }
+
+                frame.setVisible(true);
+
+                System.out.println("EXECUTION TIME: " + (after - before) + "ms");
 
                 maze.setSolution(pathing.get(0));
 
@@ -87,5 +112,22 @@ public class Main {
         }
 
         return 0;
+    }
+
+    private static String fetchAlg(Scanner input){
+        System.out.print("Which type of search algorithm would you like to use? (D)FS or (B)FS? ");
+        String alg = input.nextLine();
+
+        if(alg.equalsIgnoreCase("d") || alg.equalsIgnoreCase("dfs")){
+            return "D";
+        }
+        else if(alg.equalsIgnoreCase("b") || alg.equalsIgnoreCase("bfs")){
+            return "B";
+        }
+        else{
+            fetchAlg(input);
+        }
+
+        return "";
     }
 }
