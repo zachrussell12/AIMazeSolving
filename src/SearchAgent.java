@@ -21,7 +21,7 @@ public class SearchAgent {
         List<int[]> neighbors = null;
         List<int[]> visitedStates = new java.util.ArrayList<>();
         Stack<int[]> expandedNodes = new Stack<>();
-        HashMap<String, List<String>> treeRepresentation = new HashMap<>();
+        HashMap<String, List<int[]>> treeRepresentation = new HashMap<>();
 
         while (arr[0] != finalCoords[0] || arr[1] != finalCoords[1]){
 
@@ -31,6 +31,10 @@ public class SearchAgent {
                 int[] temp = expandedNodes.pop();
                 arr[0] = temp[0];
                 arr[1] = temp[1];
+            }
+
+            if(arr[0] == finalCoords[0] && arr[1] == finalCoords[1]){
+                break;
             }
 
             neighbors = discoverValidNeighbors(arr[0], arr[1]);
@@ -45,92 +49,22 @@ public class SearchAgent {
             }
 
             String key = arr[0] + "," + arr[1];
-            List<String> value = new java.util.ArrayList<>();
+            List<int[]> value = new java.util.ArrayList<>();
 
             for(int[]coords : neighbors){
-                value.add(coords[0] + "," + coords[1]);
+                value.add(new int[] {coords[0], coords[1]});
             }
 
             treeRepresentation.put(key, value);
 
             expandedNodes.addAll(neighbors);
 
-            /*System.out.println(finalCoords[0]);
-            System.out.println(finalCoords[1]);
-            System.out.println(arr[0]);
-            System.out.println(arr[1]);*/
-
             iterator += 1;
         }
 
-        boolean pathComplete = false;
-
         path.add(finalCoords[0] + "," + finalCoords[1]);
 
-        while(!pathComplete){
-
-            for (Map.Entry<String, List<String>> entry : treeRepresentation.entrySet()) {
-                for(String value : entry.getValue()){
-                    if(value.equalsIgnoreCase(arr[0] + "," + arr[1])){
-                        path.add(entry.getKey());
-                        arr[0] = Integer.parseInt(entry.getKey().split(",")[0]);
-                        arr[1] = Integer.parseInt(entry.getKey().split(",")[1]);
-                        if(arr[0] == 0 && arr[1] == 0){
-                            pathComplete = true;
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        Collections.reverse(path);
-
-        for(int i = 0; i < path.size(); i++){
-            for(int j = 0; j < visitedStates.size(); j++){
-                if(Integer.parseInt(path.get(i).split(",")[0]) == visitedStates.get(j)[0] && Integer.parseInt(path.get(i).split(",")[1]) == visitedStates.get(j)[1]){
-                    //System.out.println("Found already visited state");
-                    visitedStates.remove(j);
-                    break;
-                }
-            }
-        }
-
-        List<String> temp = new java.util.ArrayList<>();
-
-        for(var i = 0; i < visitedStates.size(); i++){
-            if(i == visitedStates.size()-1){
-                if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0] && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]-1)){
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-                else if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0]-1 && visitedStates.get(i-1)[1] == visitedStates.get(i)[1])){
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-                else{
-                    visitedPaths.add(new ArrayList<>(temp));
-                    temp.clear();
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-            }
-            else if (i != 0){
-                if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0] && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]-1) || (visitedStates.get(i-1)[0] == visitedStates.get(i)[0] && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]+1)){
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-                else if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0]-1 && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]) || (visitedStates.get(i-1)[0] == visitedStates.get(i)[0]+1 && visitedStates.get(i-1)[1] == visitedStates.get(i)[1])){
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-                else{
-                    visitedPaths.add(new ArrayList<>(temp));
-                    temp.clear();
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-            }
-        }
-
-        visitedPaths.add(new ArrayList<>(temp));
-
-        combinedPaths.add(path);
-        combinedPaths.addAll(visitedPaths);
+        combinedPaths.addAll(findPaths(treeRepresentation, finalCoords));
 
 
         return combinedPaths;
@@ -147,7 +81,7 @@ public class SearchAgent {
         List<int[]> neighbors = null;
         List<int[]> visitedStates = new java.util.ArrayList<>();
         Stack<int[]> expandedNodes = new Stack<>();
-        HashMap<String, List<String>> treeRepresentation = new HashMap<>();
+        HashMap<String, List<int[]>> treeRepresentation = new HashMap<>();
 
         while (arr[0] != finalCoords[0] || arr[1] != finalCoords[1]){
 
@@ -172,108 +106,29 @@ public class SearchAgent {
             }
 
             String key = arr[0] + "," + arr[1];
-            List<String> value = new java.util.ArrayList<>();
+            List<int []> value = new java.util.ArrayList<>();
 
             for(int[]coords : neighbors){
-                value.add(coords[0] + "," + coords[1]);
+                value.add(new int[]{coords[0], coords[1]});
             }
 
             treeRepresentation.put(key, value);
 
             expandedNodes.addAll(neighbors);
 
-            /*System.out.println(finalCoords[0]);
-            System.out.println(finalCoords[1]);
-            System.out.println(arr[0]);
-            System.out.println(arr[1]);*/
-
             iterator += 1;
         }
 
-        boolean pathComplete = false;
+        List<int[]> finalVal = new java.util.ArrayList<>();
+        finalVal.add(new int[]{10, 10});
+
+        treeRepresentation.put(arr[0] + "," + arr[1], finalVal);
 
         path.add(finalCoords[0] + "," + finalCoords[1]);
 
-        while(!pathComplete){
-
-            for (Map.Entry<String, List<String>> entry : treeRepresentation.entrySet()) {
-                for(String value : entry.getValue()){
-                    if(value.equalsIgnoreCase(arr[0] + "," + arr[1])){
-                        path.add(entry.getKey());
-                        arr[0] = Integer.parseInt(entry.getKey().split(",")[0]);
-                        arr[1] = Integer.parseInt(entry.getKey().split(",")[1]);
-                        if(arr[0] == 0 && arr[1] == 0){
-                            pathComplete = true;
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        Collections.reverse(path);
-
-        for(int i = 0; i < path.size(); i++){
-            for(int j = 0; j < visitedStates.size(); j++){
-                if(Integer.parseInt(path.get(i).split(",")[0]) == visitedStates.get(j)[0] && Integer.parseInt(path.get(i).split(",")[1]) == visitedStates.get(j)[1]){
-                    //System.out.println("Found already visited state");
-                    visitedStates.remove(j);
-                    break;
-                }
-            }
-        }
+        combinedPaths.addAll(findPaths(treeRepresentation, finalCoords));
 
         List<String> temp = new java.util.ArrayList<>();
-
-        /*for(var i = 0; i < visitedStates.size(); i++){
-            if(i == visitedStates.size()-1){
-                if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0] && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]-1)){
-                    System.out.println("ADDING TO EXISTING LIST: " + visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-                else if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0]-1 && visitedStates.get(i-1)[1] == visitedStates.get(i)[1])){
-                    System.out.println("ADDING TO EXISTING LIST: " + visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-                else{
-                    visitedPaths.add(new ArrayList<>(temp));
-                    temp.clear();
-                    System.out.println("ADDING TO NEW LIST: " + visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-            }
-            else if (i != 0){
-                if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0] && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]-1) || (visitedStates.get(i-1)[0] == visitedStates.get(i)[0] && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]+1)){
-                    System.out.println("ADDING TO EXISTING LIST: " + visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-                else if((visitedStates.get(i-1)[0] == visitedStates.get(i)[0]-1 && visitedStates.get(i-1)[1] == visitedStates.get(i)[1]) || (visitedStates.get(i-1)[0] == visitedStates.get(i)[0]+1 && visitedStates.get(i-1)[1] == visitedStates.get(i)[1])){
-                    System.out.println("ADDING TO EXISTING LIST: " + visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-                else{
-                    visitedPaths.add(new ArrayList<>(temp));
-                    temp.clear();
-                    System.out.println("ADDING TO NEW LIST: " + visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                    temp.add(visitedStates.get(i)[0] + "," + visitedStates.get(i)[1]);
-                }
-            }
-        }
-
-        visitedPaths.add(new ArrayList<>(temp));*/
-
-        for (Map.Entry<String, List<String>> entry : treeRepresentation.entrySet()) {
-            System.out.print(entry.getKey() + ": ");
-            System.out.println(entry.getValue());
-        }
-
-        for(List<String> pather : visitedPaths){
-            System.out.println(pather.toString());
-        }
-
-        combinedPaths.add(path);
-        combinedPaths.addAll(visitedPaths);
-
 
         return combinedPaths;
     }
@@ -303,5 +158,71 @@ public class SearchAgent {
         }
 
         return possibleNeighbors;
+    }
+
+    private boolean findMainPath(String currentCoord, String endCoord, Map<String, List<int[]>> tree, List<String> path) {
+        path.add(currentCoord);
+
+        if (currentCoord.equals(endCoord)) {
+            return true;
+        }
+
+        List<int[]> children = tree.get(currentCoord);
+        if (children != null) {
+            for (int[] child : children) {
+                String childCoord = coordArrayToString(child);
+                if (findMainPath(childCoord, endCoord, tree, path)) {
+                    return true;
+                }
+            }
+        }
+
+        path.remove(path.size() - 1);
+        return false;
+    }
+
+    private void extractBranches(String currentCoord, List<String> currentBranch, Set<String> mainPath, Map<String, List<int[]>> tree, List<List<String>> branches) {
+        if (mainPath.contains(currentCoord)) {
+            return;
+        }
+        currentBranch.add(currentCoord);
+
+        List<int[]> children = tree.get(currentCoord);
+        if (children == null || children.isEmpty()) {
+            branches.add(new ArrayList<>(currentBranch));
+        } else {
+            for (int[] child : children) {
+                extractBranches(coordArrayToString(child), currentBranch, mainPath, tree, branches);
+            }
+        }
+        currentBranch.remove(currentBranch.size() - 1);
+    }
+
+    public List<List<String>> findPaths(Map<String, List<int[]>> tree, int[] endCoord) {
+        String endCoordStr = coordArrayToString(endCoord);
+        List<String> mainPath = new ArrayList<>();
+        List<List<String>> allPaths = new ArrayList<>();
+
+        if (findMainPath("0,0", endCoordStr, tree, mainPath)) {
+            Set<String> mainPathSet = new HashSet<>(mainPath);
+            allPaths.add(mainPath);
+
+            for (String coord : mainPath) {
+                if (tree.containsKey(coord)) {
+                    for (int[] child : tree.get(coord)) {
+                        String childCoord = coordArrayToString(child);
+                        if (!mainPathSet.contains(childCoord)) {
+                            extractBranches(childCoord, new ArrayList<>(), mainPathSet, tree, allPaths);
+                        }
+                    }
+                }
+            }
+        }
+
+        return allPaths;
+    }
+
+    private static String coordArrayToString(int[] coord) {
+        return coord[0] + "," + coord[1];
     }
 }

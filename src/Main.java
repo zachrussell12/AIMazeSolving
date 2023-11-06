@@ -24,7 +24,7 @@ public class Main {
                 JFrame frame = new JFrame("Maze Generator");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setResizable(false);
-                MazeGeneratorEasy maze = new MazeGeneratorEasy(10, 60, 60, seed);
+                MazeGeneratorEasy maze = new MazeGeneratorEasy(20, 54, 54, seed);
                 frame.add(maze);
                 frame.pack();
                 frame.setLocationRelativeTo(null);
@@ -50,9 +50,16 @@ public class Main {
 
                 System.out.println("EXECUTION TIME: " + (after - before) + "ms");
 
+                float sum = 0;
+                for(List<String> path : pathing){
+                    sum += path.size();
+                }
+
+                System.out.println("PERCENTAGE OF MAZE EXPLORED: " + (sum / 2916)*100 + "%");
+
                 maze.setSolution(pathing.get(0));
 
-                maze.drawCircles(pathing);
+                maze.drawPaths(pathing);
             });
 
         }else if(difficulty.equalsIgnoreCase("e")) {
@@ -88,9 +95,16 @@ public class Main {
 
                 System.out.println("EXECUTION TIME: " + (after - before) + "ms");
 
+                float sum = 0;
+                for(List<String> path : pathing){
+                    sum += path.size();
+                }
+
+                System.out.println("PERCENTAGE OF MAZE EXPLORED: " + (sum / 144)*100 + "%");
+
                 maze.setSolution(pathing.get(0));
 
-                maze.drawCircles(pathing);
+                maze.drawPaths(pathing);
             });
 
         }
